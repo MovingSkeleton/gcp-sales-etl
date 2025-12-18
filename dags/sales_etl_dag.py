@@ -1,4 +1,4 @@
-from airflow import dags
+from airflow import models
 from airflow.utils.dates import days_ago
 from airflow.operators.empty import EmptyOperator
 
@@ -6,7 +6,7 @@ default_args={
     "owner":"Movingskeleton"
 }
 
-with DAG(
+with models.DAG(
     dag_id= 'sales_etl_pipeline'
     start_date=days_ago(1),
     schedule_interval="@daily",
