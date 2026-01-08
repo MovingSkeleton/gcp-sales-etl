@@ -1,26 +1,34 @@
-from airflow import models
-from airflow.utils.dates import days_ago
-from airflow.operators.empty import EmptyOperator
+from airflow import DAG
+from datetime import datetime
+from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
+
+#Config
+PROJECT_ID="single-scholar-482212-q3",
+BUCKET_NAME="etl-composer-files",
+DATASET_ID="data_staging"
+TABLE_ID="sample_Table2"
 
 default_args={
-    "owner":"Movingskeleton"
+    "owner":"sqlinminutes@gmail.com",
+    "start_date":datetime(2026,1,1)
 }
 
-with models.DAG(
-    dag_id= 'sales_etl_pipeline'
-    start_date=days_ago(1),
-    schedule_interval="@daily",
-    catchup=False,
-    tags=['sales','etl'],
+with DAG(
+    dag_id="sampleCSVMigrationDAG",
     default_args=default_args,
+    schedule_interval="@once",
+    catchup=False,
+)as dag:
 
-) as dag:
-    
-    start=EmptyOperator(
-        task_id='start'
-    )
+    CsvToBq=GCSToBigQueryOperator(
+        task_id="CsvToBq",
+        source_format="CSV",
+        bucket=f"{BUCKET_NAME}",
+        source_objects="customer.csv",
+        destination_project_dataset_table=f"{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}",
+        skip_leading_rows=1,
+        write_disposition="WRITE_TRUNCATE",
+        autodetect=True,
 
-    end=EmptyOperator(
-        task_id='end'
     )
-    start>>end
+    CsvToBq
