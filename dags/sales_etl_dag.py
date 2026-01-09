@@ -3,8 +3,8 @@ from datetime import datetime
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 
 #Config
-PROJECT_ID="single-scholar-482212-q3",
-BUCKET_NAME="etl-composer-files",
+PROJECT_ID="single-scholar-482212-q3"
+BUCKET_NAME="etl-composer-files"
 DATASET_ID="data_staging"
 TABLE_ID="sample_Table2"
 
@@ -23,9 +23,9 @@ with DAG(
     CsvToBq=GCSToBigQueryOperator(
         task_id="CsvToBq",
         source_format="CSV",
-        bucket=f"{BUCKET_NAME}",
+        bucket=BUCKET_NAME,
         source_objects="customer.csv",
-        destination_project_dataset_table=f"{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}",
+        destination_project_dataset_table="single-scholar-482212-q3.data_staging.sample_Table2",
         skip_leading_rows=1,
         write_disposition="WRITE_TRUNCATE",
         autodetect=True,
